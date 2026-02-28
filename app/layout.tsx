@@ -1,18 +1,12 @@
 import type { Metadata, Viewport } from 'next'
-import { Lato, Playfair_Display } from 'next/font/google'
+import { Open_Sans } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const lato = Lato({
+const openSans = Open_Sans({
   subsets: ['latin'],
-  weight: ['300', '400', '700'],
-  variable: '--font-lato',
-})
-
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-playfair',
+  weight: ['300', '400', '600', '700'],
+  variable: '--font-open-sans',
 })
 
 export const metadata: Metadata = {
@@ -50,7 +44,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${lato.variable} ${playfair.variable}`}>
+    <html lang="en" className={openSans.variable}>
       <body className="font-sans antialiased">
         {children}
         <Analytics />

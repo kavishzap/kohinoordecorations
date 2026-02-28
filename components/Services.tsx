@@ -6,7 +6,7 @@ import { services } from "@/lib/data"
 import SectionReveal from "./SectionReveal"
 import DecorativeDivider from "./DecorativeDivider"
 
-function ServiceIcon({ icon }: { icon: string }) {
+function ServiceIcon({ icon, className }: { icon: string; className?: string }) {
   const paths: Record<string, React.ReactNode> = {
     stage: (
       <path
@@ -83,7 +83,7 @@ function ServiceIcon({ icon }: { icon: string }) {
       width="28"
       height="28"
       viewBox="0 0 24 24"
-      className="text-primary"
+      className={className ?? "text-primary"}
       aria-hidden="true"
     >
       {paths[icon]}
@@ -115,23 +115,45 @@ export default function Services() {
         </SectionReveal>
 
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-6">
-          {services.map((service, i) => (
-            <motion.div
-              key={service.label}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08, duration: 0.5 }}
-              className="flex flex-col items-center gap-3 rounded-2xl border border-border bg-card p-6 text-center shadow-sm"
-            >
-              <div className="flex size-14 items-center justify-center rounded-xl bg-secondary">
-                <ServiceIcon icon={service.icon} />
-              </div>
-              <span className="text-sm font-medium leading-snug text-foreground">
-                {service.label}
-              </span>
-            </motion.div>
-          ))}
+          {services.map((service, i) => {
+            const variant = i % 3
+            const isSilver = variant === 0
+            const isGold = variant === 1
+            const isPlatinum = variant === 2
+            const cardStyles = isSilver
+              ? "border-2 border-slate-300 bg-gradient-to-b from-slate-50/90 to-card shadow-sm dark:from-slate-900/20 dark:to-card"
+              : isGold
+                ? "border-2 border-amber-400/60 bg-gradient-to-b from-amber-50/90 to-card ring-1 ring-amber-300/30 shadow-sm dark:from-amber-950/20 dark:to-card dark:ring-amber-600/20"
+                : "border-2 border-slate-400/70 bg-gradient-to-b from-slate-100/90 to-card ring-1 ring-slate-300/30 shadow-sm dark:from-slate-800/30 dark:to-card dark:ring-slate-500/20"
+            const iconBgStyles = isSilver
+              ? "bg-slate-200/80 text-slate-600 dark:bg-slate-700/50 dark:text-slate-300"
+              : isGold
+                ? "bg-amber-200/80 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300"
+                : "bg-slate-300/80 text-slate-700 dark:bg-slate-600/50 dark:text-slate-200"
+            const labelStyles = isSilver
+              ? "text-slate-700 dark:text-slate-300"
+              : isGold
+                ? "text-amber-800 dark:text-amber-200"
+                : "text-slate-800 dark:text-slate-200"
+            return (
+              <motion.div
+                key={service.label}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -4, boxShadow: "0 12px 24px -8px rgba(61,44,44,0.15)" }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08, duration: 0.5 }}
+                className={`flex flex-col items-center gap-3 rounded-2xl p-6 text-center transition-shadow ${cardStyles}`}
+              >
+                <div className={`flex size-14 items-center justify-center rounded-xl ${iconBgStyles}`}>
+                  <ServiceIcon icon={service.icon} className="text-inherit" />
+                </div>
+                <span className={`text-sm font-medium leading-snug ${labelStyles}`}>
+                  {service.label}
+                </span>
+              </motion.div>
+            )
+          })}
         </div>
       </div>
     </section>

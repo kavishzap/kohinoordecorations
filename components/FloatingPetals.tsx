@@ -19,9 +19,9 @@ function generatePetals(count: number): Petal[] {
     x: Math.random() * 100,
     delay: Math.random() * 12,
     duration: 14 + Math.random() * 10,
-    size: 8 + Math.random() * 10,
+    size: 24 + Math.random() * 20,
     rotation: Math.random() * 360,
-    opacity: 0.15 + Math.random() * 0.15,
+    opacity: 0.4 + Math.random() * 0.35,
   }))
 }
 
@@ -38,7 +38,7 @@ export default function FloatingPetals() {
     }
     const handler = (e: MediaQueryListEvent) => setVisible(!e.matches)
     mq.addEventListener("change", handler)
-    setPetals(generatePetals(8))
+    setPetals(generatePetals(10))
     return () => mq.removeEventListener("change", handler)
   }, [])
 
@@ -73,17 +73,15 @@ export default function FloatingPetals() {
             className="absolute"
             style={{ left: 0, top: 0 }}
           >
-            <svg
+            <img
+              src="/assets/petal.png"
+              alt=""
               width={petal.size}
               height={petal.size * 1.4}
-              viewBox="0 0 10 14"
-              fill="none"
-            >
-              <path
-                d="M5 0C5 0 10 4 10 8C10 12 5 14 5 14C5 14 0 12 0 8C0 4 5 0 5 0Z"
-                fill="#C4897A"
-              />
-            </svg>
+              className="object-contain select-none"
+              draggable={false}
+              aria-hidden
+            />
           </motion.div>
         ))}
       </AnimatePresence>

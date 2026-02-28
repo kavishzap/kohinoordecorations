@@ -40,8 +40,8 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-lato), 'Lato', sans-serif;
-  --font-serif: var(--font-playfair), 'Playfair Display', serif;
+  --font-sans: var(--font-open-sans), 'Open Sans', sans-serif;
+  --font-serif: var(--font-open-sans), 'Open Sans', sans-serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-rose: #C4897A;
   --color-rose-light: #D4A99A;

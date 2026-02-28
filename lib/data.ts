@@ -21,6 +21,107 @@ export interface PackageData {
   popular?: boolean
 }
 
+export interface WeddingPackageData {
+  name: string
+  priceRange: string
+  items: string[]
+  popular?: boolean
+}
+
+export interface WeddingTypePackages {
+  id: string
+  label: string
+  packages: WeddingPackageData[]
+}
+
+export const weddingTypePackages: WeddingTypePackages[] = [
+  {
+    id: "indian",
+    label: "Indian Wedding",
+    packages: [
+      {
+        name: "Silver Package",
+        priceRange: "15k – 20k",
+        items: ["Simple and elegant stage decorations only"],
+      },
+      {
+        name: "Gold Package",
+        priceRange: "As from 45k",
+        popular: true,
+        items: [
+          "Simple Haldi decorations",
+          "Wedding decorations",
+          "Simple alley decoration",
+          "Entrance decorations",
+          "VIP table decorations",
+          "Up to 20 guests decorations",
+        ],
+      },
+      {
+        name: "Platinum Package",
+        priceRange: "As from 75k",
+        items: [
+          "Customised per event",
+          "Elegant Haldi decorations",
+          "Wedding mandap",
+          "Reception decoration",
+          "Heavy alley décor",
+          "Entrance decorations",
+          "VIP table decorations",
+          "Up to 30 guests decorations",
+          "Cake canopy",
+          "Up to 400 chair covers with ribbon (colour of your choice)",
+          "5 cocktail tables",
+        ],
+      },
+    ],
+  },
+  {
+    id: "muslim",
+    label: "Muslim Wedding",
+    packages: [
+      {
+        name: "Silver Package",
+        priceRange: "15k – 20k",
+        items: [
+          "Stage decorations only",
+          "Sofa for groom and bride",
+          "Cake table",
+        ],
+      },
+      {
+        name: "Gold Package",
+        priceRange: "30k – 40k",
+        popular: true,
+        items: [
+          "Stage decorations",
+          "Sofa for groom and bride",
+          "Cake table",
+          "Simple alley decoration",
+          "Entrance decorations",
+          "VIP table decorations",
+          "Up to 20 guests decorations",
+        ],
+      },
+      {
+        name: "Platinum Package",
+        priceRange: "As from 50k",
+        items: [
+          "Stage decorations",
+          "Sofa for groom and bride",
+          "Cake table",
+          "Heavy alley decoration",
+          "Entrance decorations",
+          "VIP table decorations",
+          "Up to 30 guests decorations",
+          "Cake canopy",
+          "Up to 400 chair covers with ribbon (colour of your choice)",
+        ],
+      },
+    ],
+  },
+]
+
 export const themes: ThemeData[] = [
   {
     name: "Haldi Decoration",
@@ -165,7 +266,7 @@ export const services = [
   { icon: "stage", label: "Custom Stage Design" },
   { icon: "flower", label: "Floral Arrangements" },
   { icon: "entrance", label: "Entrance Styling" },
-  { icon: "table", label: "Table D\u00e9cor" },
+  { icon: "table", label: "Table Décor" },
   { icon: "lighting", label: "Lighting Setup" },
   { icon: "theme", label: "Theme Coordination" },
 ]

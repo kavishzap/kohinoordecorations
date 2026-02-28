@@ -48,20 +48,11 @@ function AnimatedCounter({
   )
 }
 
-/* ---------- feature cards ---------- */
+/* ---------- feature cards (stats) ---------- */
 const features = [
-  {
-    title: "Soaring Ceilings",
-    desc: "40 ft grand ceilings allow dramatic drapery, chandeliers, and floral canopies.",
-  },
-  {
-    title: "Flexible Canvas",
-    desc: "An adaptable space that transforms to suit Haldi, Mehendi, or any grand reception.",
-  },
-  {
-    title: "In-House Decor Team",
-    desc: "Our dedicated team handles every detail from concept to flawless execution.",
-  },
+  { title: "1000+", desc: "Events Hosted" },
+  { title: "5+", desc: "Years of Expertise" },
+  { title: "50+", desc: "Decor Themes" },
 ]
 
 /* ---------- component ---------- */
@@ -77,7 +68,7 @@ export default function About() {
   const headingY = useTransform(scrollYProgress, [0, 0.4], [30, 0])
 
   return (
-    <section ref={sectionRef} id="about" className="relative overflow-hidden bg-background py-28 lg:py-36">
+    <section ref={sectionRef} id="about" className="relative overflow-hidden bg-background pt-28 pb-8 lg:pt-36 lg:pb-12">
       {/* subtle background accent */}
       <div className="pointer-events-none absolute -top-40 right-0 h-[600px] w-[600px] rounded-full bg-primary/[0.04] blur-3xl" />
 
@@ -188,22 +179,22 @@ export default function About() {
               className="space-y-5"
             >
               <p className="text-lg leading-relaxed text-foreground/90">
-                Nestled in the heart of the city, our hall offers a spacious,
-                light-filled canvas ready to transform into the celebration of
-                your dreams.
+                Kohinoor Decorations specialises in decoration packages for
+                weddings, receptions, and every celebration in between—from
+                Haldi and Mehendi to engagement parties and beyond.
               </p>
               <p className="leading-relaxed text-muted-foreground">
-                With soaring ceilings, graceful drapery, and an atmosphere
-                steeped in romance, every corner is designed to inspire awe and
-                wonder. Whether you envision a sun-drenched Haldi, a vibrant
-                Mehendi night, or a grand Reception, our flexible space and
-                dedicated decor team will bring your vision to life with
-                meticulous attention to detail.
+                We bring your vision to life with elegant florals, graceful
+                drapery, and meticulous attention to detail. Whether you dream of
+                a sun-drenched Haldi, a vibrant Mehendi night, or a grand
+                reception, our dedicated team and flexible packages are here to
+                transform your event into the celebration you have always
+                imagined.
               </p>
             </motion.div>
 
             {/* feature cards */}
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4">
               {features.map((f, i) => (
                 <motion.div
                   key={f.title}
@@ -214,10 +205,10 @@ export default function About() {
                   className="group relative rounded-2xl border border-border bg-card p-5 shadow-sm transition-shadow hover:shadow-md"
                 >
                   <div className="absolute inset-x-0 top-0 h-1 rounded-t-2xl bg-primary/60 opacity-0 transition-opacity group-hover:opacity-100" />
-                  <h3 className="font-serif text-sm font-semibold text-foreground">
+                  <span className="font-serif text-2xl font-semibold text-foreground sm:text-3xl">
                     {f.title}
-                  </h3>
-                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                  </span>
+                  <p className="mt-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
                     {f.desc}
                   </p>
                 </motion.div>
@@ -236,32 +227,10 @@ export default function About() {
                 {'"Every celebration tells a story. We simply make sure the setting is unforgettable."'}
               </p>
               <cite className="mt-2 block text-xs font-medium not-italic text-muted-foreground">
-                -- The Floral Romantic Team
+                — Kohinoor Decorations
               </cite>
             </motion.blockquote>
           </div>
-        </div>
-
-        {/* ---------- stat counters ---------- */}
-        <div className="mt-24 grid grid-cols-3 gap-6 border-t border-border pt-14">
-          {stats.map(({ icon: Icon, value, suffix, label }, i) => (
-            <motion.div
-              key={label}
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.12 * i, duration: 0.6 }}
-              className="flex flex-col items-center text-center"
-            >
-              <Icon className="mb-3 size-5 text-primary" />
-              <span className="font-serif text-3xl font-semibold text-foreground sm:text-4xl">
-                <AnimatedCounter target={value} suffix={suffix} />
-              </span>
-              <span className="mt-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                {label}
-              </span>
-            </motion.div>
-          ))}
         </div>
       </div>
     </section>
