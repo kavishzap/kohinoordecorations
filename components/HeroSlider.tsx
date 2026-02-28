@@ -87,7 +87,7 @@ export default function HeroSlider() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1 }}
-          className="max-w-xl text-base font-light leading-relaxed text-white/80 sm:text-lg"
+          className="max-w-xl text-lg font-bold leading-relaxed text-white/80 sm:text-xl"
         >
           Floral d&eacute;cor setups for Haldi, Mehendi, Reception &amp; Special Events
         </motion.p>

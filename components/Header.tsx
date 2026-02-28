@@ -47,8 +47,13 @@ export default function Header() {
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <a href="#" className="font-serif text-2xl font-semibold tracking-tight text-foreground">
-          Floral <span className="text-primary">Romantic</span>
+        <a
+          href="#"
+          className={`font-serif text-2xl font-semibold tracking-tight transition-colors ${
+            scrolled ? "text-foreground" : "text-white"
+          }`}
+        >
+          Kohinoor <span className={scrolled ? "text-primary" : "text-white"}>Decorations</span>
         </a>
 
         {/* Desktop nav */}
@@ -58,7 +63,11 @@ export default function Header() {
               key={link.href}
               href={link.href}
               onClick={(e) => handleNavClick(e, link.href)}
-              className="text-base font-medium text-muted-foreground transition-colors hover:text-primary"
+              className={`text-lg font-medium transition-colors ${
+                scrolled
+                  ? "text-foreground hover:text-primary"
+                  : "text-white hover:text-white/90"
+              }`}
             >
               {link.label}
             </a>
@@ -67,7 +76,7 @@ export default function Header() {
 
         {/* Mobile menu toggle */}
         <button
-          className="md:hidden text-foreground"
+          className={`md:hidden ${scrolled ? "text-foreground" : "text-white"}`}
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
         >
@@ -91,7 +100,7 @@ export default function Header() {
                   key={link.href}
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
-                  className="rounded-xl px-3 py-2.5 text-base font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-primary"
+                  className="rounded-xl px-3 py-2.5 text-lg font-medium text-foreground transition-colors hover:bg-secondary hover:text-primary"
                 >
                   {link.label}
                 </a>

@@ -171,9 +171,9 @@ export const services = [
 ]
 
 export const heroSlides = [
-  { src: "/images/hero-1.jpg", alt: "Elegant rose and crystal wedding hall" },
-  { src: "/images/hero-2.jpg", alt: "Luxurious reception table arrangement" },
-  { src: "/images/hero-3.jpg", alt: "Traditional floral mandap stage" },
+  { src: "/assets/hero3.jpeg", alt: "Kohinoor Decorations hero" },
+  { src: "/assets/hero2.jpeg", alt: "Kohinoor Decorations hero" },
+  { src: "/assets/hero1.jpeg", alt: "Kohinoor Decorations hero" },
 ]
 
 export const footerImages = [
