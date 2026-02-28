@@ -5,7 +5,6 @@ import { motion, useScroll, useTransform } from "framer-motion"
 import { Star } from "lucide-react"
 import { weddingTypePackages } from "@/lib/data"
 import SectionReveal from "./SectionReveal"
-import DecorativeDivider from "./DecorativeDivider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function Packages() {
@@ -17,18 +16,27 @@ export default function Packages() {
   const headingY = useTransform(scrollYProgress, [0, 0.3], [40, 0])
 
   return (
-    <section ref={sectionRef} id="packages" className="bg-secondary py-24">
-      <div className="mx-auto max-w-7xl px-6">
+    <section
+      ref={sectionRef}
+      id="packages"
+      className="relative overflow-hidden py-24 bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: `linear-gradient(to bottom, rgba(61,44,44,0.88), rgba(61,44,44,0.82)), url('/assets/about3.jpeg')`,
+      }}
+    >
+      <div className="relative mx-auto max-w-7xl px-6">
         <SectionReveal>
           <motion.div className="mb-12 text-center" style={{ y: headingY }}>
-            <p className="text-sm font-medium uppercase tracking-widest text-primary">
+            <p className="text-sm font-medium uppercase tracking-widest text-white/90">
               Our Offerings
             </p>
-            <h2 className="mt-3 font-serif text-3xl font-semibold text-foreground sm:text-4xl text-balance">
+            <h2 className="mt-3 font-serif text-3xl font-semibold text-white sm:text-4xl text-balance">
               D&eacute;cor Packages
             </h2>
-            <DecorativeDivider className="mt-4" />
-            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground leading-relaxed">
+            <div className="mt-4" aria-hidden>
+              <span className="block h-px w-20 mx-auto bg-white/50" />
+            </div>
+            <p className="mx-auto mt-4 max-w-2xl text-white/85 leading-relaxed">
               Choose your wedding type and a package that fits your vision and
               guest count.
             </p>
@@ -36,12 +44,12 @@ export default function Packages() {
         </SectionReveal>
 
         <Tabs defaultValue="indian" className="w-full">
-          <TabsList className="mx-auto mb-10 flex h-12 w-full max-w-md justify-center gap-1 rounded-xl bg-muted/80 p-1.5 sm:max-w-sm">
+          <TabsList className="mx-auto mb-10 flex h-12 w-full max-w-md justify-center gap-1 rounded-xl bg-white/15 backdrop-blur-sm p-1.5 sm:max-w-sm border border-white/20">
             {weddingTypePackages.map((type) => (
               <TabsTrigger
                 key={type.id}
                 value={type.id}
-                className="flex-1 rounded-lg px-4 text-sm font-medium transition-colors data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                className="flex-1 rounded-lg px-4 text-sm font-medium text-white/90 transition-colors data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-sm"
               >
                 {type.label}
               </TabsTrigger>
