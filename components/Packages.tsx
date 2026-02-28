@@ -56,74 +56,73 @@ export default function Packages() {
             >
               <div className="grid gap-8 md:grid-cols-3">
                 {weddingType.packages.map((pkg, i) => {
-                  const isSilver = pkg.name.includes("Silver")
-                  const isGold = pkg.name.includes("Gold")
-                  const isPlatinum = pkg.name.includes("Platinum")
-                  const cardStyles = isSilver
-                    ? "border-slate-300 bg-gradient-to-b from-slate-50/80 to-card dark:from-slate-900/30 dark:to-card"
-                    : isGold
-                      ? "border-amber-400/60 bg-gradient-to-b from-amber-50/80 to-card ring-1 ring-amber-300/30 dark:from-amber-950/20 dark:to-card dark:ring-amber-600/20"
-                      : "border-slate-400/70 bg-gradient-to-b from-slate-100/80 to-card ring-1 ring-slate-300/30 dark:from-slate-800/30 dark:to-card dark:ring-slate-500/20"
-                  const tierLabelStyles = isSilver
-                    ? "bg-slate-400/90 text-white"
-                    : isGold
-                      ? "bg-amber-500 text-white"
-                      : "bg-slate-600 text-white"
-                  const priceStyles = isSilver
-                    ? "text-slate-600 dark:text-slate-400"
-                    : isGold
-                      ? "text-amber-700 dark:text-amber-400"
-                      : "text-slate-700 dark:text-slate-300"
+                  const isPopular = !!pkg.popular
+                  const cardStyles = isPopular
+                    ? "border-2 border-amber-400 bg-card shadow-lg ring-2 ring-amber-300/50 dark:ring-amber-500/30"
+                    : "border border-border bg-card shadow-sm"
+                  const buttonStyles = isPopular
+                    ? "bg-amber-500 text-white hover:bg-amber-600 hover:shadow-md"
+                    : "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md"
                   return (
-                  <SectionReveal key={pkg.name} delay={i * 0.08}>
-                    <motion.div
-                      whileHover={{
-                        y: -6,
-                        boxShadow:
-                          "0 20px 40px -12px rgba(61,44,44,0.12)",
-                      }}
-                      transition={{ duration: 0.3 }}
-                      className={`relative flex h-full flex-col rounded-2xl border-2 p-6 shadow-sm transition-shadow sm:p-8 ${cardStyles}`}
-                    >
-                      <div className={`absolute right-0 top-0 rounded-bl-lg px-3 py-1 text-xs font-semibold uppercase tracking-wider ${tierLabelStyles}`}>
-                        {pkg.name.replace(" Package", "")}
-                      </div>
-                      {pkg.popular && (
-                        <div className="absolute -top-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground shadow-md">
-                          <Star className="size-3 fill-current" />
-                          Most Popular
+                    <SectionReveal key={pkg.name} delay={i * 0.08}>
+                      <motion.div
+                        whileHover={{
+                          y: -4,
+                          boxShadow: isPopular
+                            ? "0 24px 48px -12px rgba(245, 158, 11, 0.2)"
+                            : "0 16px 32px -8px rgba(61,44,44,0.1)",
+                        }}
+                        transition={{ duration: 0.3 }}
+                        className={`relative flex h-full flex-col rounded-2xl p-6 transition-shadow sm:p-8 ${cardStyles}`}
+                      >
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="font-serif text-xl font-semibold text-foreground">
+                            {pkg.name}
+                          </h3>
+                          {isPopular && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-amber-800 dark:bg-amber-900/50 dark:text-amber-200">
+                              <Star className="size-3 fill-current" />
+                              Most Popular
+                            </span>
+                          )}
                         </div>
-                      )}
 
-                      <h3 className="font-serif text-xl font-semibold text-foreground pr-20">
-                        {pkg.name}
-                      </h3>
-                      <p className={`mt-2 text-lg font-semibold ${priceStyles}`}>
-                        {pkg.priceRange.startsWith("As from ")
-                          ? pkg.priceRange.replace("As from ", "As from Rs ")
-                          : `Rs ${pkg.priceRange}`}
-                      </p>
+                        <p className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                          {pkg.priceRange.startsWith("As from ")
+                            ? pkg.priceRange.replace("As from ", "As from Rs ")
+                            : `Rs ${pkg.priceRange}`}
+                        </p>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          Customisable per event. Enquire for details.
+                        </p>
 
-                      <ul className="mt-6 flex-1 space-y-3">
-                        {pkg.items.map((item) => (
-                          <li
-                            key={item}
-                            className="flex items-start gap-2.5 text-sm text-muted-foreground"
-                          >
-                            <img
-                              src="/assets/petal.png"
-                              alt=""
-                              className="mt-0.5 size-5 shrink-0 object-contain"
-                              width={20}
-                              height={28}
-                              aria-hidden
-                            />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </motion.div>
-                  </SectionReveal>
+                        <ul className="mt-6 flex-1 space-y-3 border-t border-border pt-6">
+                          {pkg.items.map((item) => (
+                            <li
+                              key={item}
+                              className="flex items-start gap-2.5 text-sm text-muted-foreground"
+                            >
+                              <img
+                                src="/assets/petal.png"
+                                alt=""
+                                className="mt-0.5 size-5 shrink-0 object-contain"
+                                width={20}
+                                height={28}
+                                aria-hidden
+                              />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+
+                        <a
+                          href="#contact"
+                          className={`mt-6 flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold transition-all ${buttonStyles}`}
+                        >
+                          Get Started
+                        </a>
+                      </motion.div>
+                    </SectionReveal>
                   )
                 })}
               </div>

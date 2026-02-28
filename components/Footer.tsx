@@ -52,11 +52,10 @@ export default function Footer() {
           {/* Brand */}
           <div className="max-w-xs">
             <p className="font-serif text-xl font-semibold text-white">
-              Floral <span className="text-primary">Romantic</span>
+              Kohinoor <span className="text-primary">Decorations</span>
             </p>
             <p className="mt-2 text-sm leading-relaxed text-white/60">
-              Crafting unforgettable floral d&eacute;cor experiences for your most
-              cherished celebrations.
+              Decoration packages for weddings, receptions & every celebration.
             </p>
           </div>
 
@@ -111,7 +110,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs text-white/40">
-          &copy; {new Date().getFullYear()} Floral Romantic. All rights reserved.
+          &copy; {new Date().getFullYear()} Kohinoor Decorations. All rights reserved.
         </div>
       </div>
     </footer>

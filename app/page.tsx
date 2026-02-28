@@ -6,7 +6,6 @@ import About from "@/components/About"
 import Themes from "@/components/Themes"
 import GalleryTabs from "@/components/GalleryTabs"
 import Packages from "@/components/Packages"
-import Services from "@/components/Services"
 import Contact from "@/components/Contact"
 import Footer from "@/components/Footer"
 import FloatingPetals from "@/components/FloatingPetals"
@@ -21,7 +20,6 @@ export default function Home() {
         <Themes />
         <GalleryTabs />
         <Packages />
-        <Services />
         <Contact />
       </main>
       <Footer />
