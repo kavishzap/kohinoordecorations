@@ -92,14 +92,14 @@ export default function About() {
             className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-primary"
           >
             <Sparkles className="size-3.5" />
-            About the Hall
+            About Kohinoor Decorations
           </motion.p>
           <motion.h2
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="mx-auto mt-4 max-w-3xl font-serif text-4xl font-semibold leading-tight text-foreground sm:text-5xl lg:text-6xl text-balance"
+            className="mx-auto mt-4 max-w-3xl font-serif text-4xl font-semibold leading-tight text-foreground sm:text-5xl lg:text-6xl md:whitespace-nowrap"
           >
             Where Elegance Meets Celebration
           </motion.h2>
@@ -113,9 +113,9 @@ export default function About() {
         </motion.div>
 
         {/* ---------- main grid: images + copy ---------- */}
-        <div className="grid items-start gap-16 lg:grid-cols-2">
+        <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-16">
           {/* LEFT -- asymmetric image collage */}
-          <div className="relative mx-auto h-[520px] w-full max-w-lg sm:h-[580px] lg:h-[620px]">
+          <div className="relative mx-auto h-[380px] w-full max-w-lg sm:h-[480px] lg:h-[620px]">
             {/* large main image */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -127,8 +127,8 @@ export default function About() {
             >
               <div className="relative aspect-[3/4]">
                 <Image
-                  src="/images/about-hall.jpg"
-                  alt="Wedding hall interior with elegant drapery"
+                  src="/assets/about1.jpeg"
+                  alt="Kohinoor Decorations – wedding hall"
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 70vw, 35vw"
@@ -147,8 +147,8 @@ export default function About() {
             >
               <div className="relative aspect-square">
                 <Image
-                  src="/images/about-detail-1.jpg"
-                  alt="Crystal chandelier ceiling detail"
+                  src="/assets/about3.jpeg"
+                  alt="Kohinoor Decorations – celebration detail"
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 40vw, 20vw"
@@ -162,28 +162,19 @@ export default function About() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.35 }}
-              className="absolute bottom-0 right-4 z-20 w-[48%] overflow-hidden rounded-xl border-4 border-background shadow-lg"
+              className="absolute bottom-16 right-4 z-20 w-[48%] overflow-hidden rounded-xl border-4 border-background shadow-lg lg:bottom-32"
               style={{ y: img3Y }}
             >
               <div className="relative aspect-[4/3]">
                 <Image
-                  src="/images/about-detail-2.jpg"
-                  alt="Blush pink rose arrangement"
+                  src="/assets/about2.jpeg"
+                  alt="Kohinoor Decorations – elegant décor"
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 45vw, 22vw"
                 />
               </div>
             </motion.div>
-
-            {/* decorative accent ring */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="absolute -bottom-4 left-[58%] z-0 size-28 rounded-full border-2 border-dashed border-primary/20"
-            />
           </div>
 
           {/* RIGHT -- copy, features, quote */}

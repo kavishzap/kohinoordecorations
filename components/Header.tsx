@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X } from "lucide-react"
 
 const navLinks = [
-  { label: "About Hall", href: "#about" },
+  { label: "About Us", href: "#about" },
   { label: "Decorations", href: "#decorations" },
   { label: "Gallery", href: "#gallery" },
   { label: "Packages", href: "#packages" },
@@ -41,19 +41,22 @@ export default function Header() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-background/90 backdrop-blur-md shadow-sm border-b border-border"
-          : "bg-transparent"
+        scrolled ? "bg-cover bg-center bg-no-repeat shadow-sm" : "bg-transparent"
       }`}
+      style={
+        scrolled
+          ? {
+              backgroundImage: `linear-gradient(to bottom, rgba(61,44,44,0.88), rgba(61,44,44,0.82)), url('/images/hero3.jpeg')`,
+            }
+          : undefined
+      }
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <a
           href="#"
-          className={`font-serif text-2xl font-semibold tracking-tight transition-colors ${
-            scrolled ? "text-foreground" : "text-white"
-          }`}
+          className="font-serif text-2xl font-semibold tracking-tight text-white transition-colors hover:text-white/90"
         >
-          Kohinoor <span className={scrolled ? "text-primary" : "text-white"}>Decorations</span>
+          Kohinoor <span className="text-white">Decorations</span>
         </a>
 
         {/* Desktop nav */}
@@ -63,11 +66,7 @@ export default function Header() {
               key={link.href}
               href={link.href}
               onClick={(e) => handleNavClick(e, link.href)}
-              className={`text-lg font-medium transition-colors ${
-                scrolled
-                  ? "text-foreground hover:text-primary"
-                  : "text-white hover:text-white/90"
-              }`}
+              className="text-lg font-medium text-white transition-colors hover:text-white/90"
             >
               {link.label}
             </a>
@@ -76,7 +75,7 @@ export default function Header() {
 
         {/* Mobile menu toggle */}
         <button
-          className={`md:hidden ${scrolled ? "text-foreground" : "text-white"}`}
+          className="md:hidden text-white"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
         >
@@ -84,29 +83,61 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile nav */}
+      {/* Mobile sidebar overlay */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.nav
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden border-b border-border bg-background/95 backdrop-blur-md md:hidden"
-            aria-label="Mobile navigation"
-          >
-            <div className="flex flex-col gap-1 px-6 py-4">
-              {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={(e) => handleNavClick(e, link.href)}
-                  className="rounded-xl px-3 py-2.5 text-lg font-medium text-foreground transition-colors hover:bg-secondary hover:text-primary"
+          <>
+            <motion.div
+              key="sidebar-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm md:hidden"
+              aria-hidden="true"
+              onClick={() => setMobileOpen(false)}
+            />
+            <motion.aside
+              key="sidebar-panel"
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "tween", duration: 0.3, ease: "easeOut" }}
+              className="fixed top-0 left-0 z-[70] flex h-full w-[min(280px,85vw)] flex-col bg-cover bg-center bg-no-repeat shadow-xl md:hidden"
+              style={{
+                backgroundImage: `linear-gradient(to right, rgba(61,44,44,0.92), rgba(61,44,44,0.85)), url('/assets/hero1.jpeg')`,
+              }}
+              aria-label="Mobile navigation"
+            >
+              <div className="flex items-center justify-between px-6 py-4">
+                <span className="font-serif text-xl font-semibold text-white sm:text-2xl">
+                  Kohinoor Decorations
+                </span>
+                <button
+                  className="rounded-lg p-2 text-white transition-colors hover:bg-white/10"
+                  onClick={() => setMobileOpen(false)}
+                  aria-label="Close menu"
                 >
-                  {link.label}
-                </a>
-              ))}
-            </div>
-          </motion.nav>
+                  <X className="size-5" />
+                </button>
+              </div>
+              <nav className="flex flex-1 flex-col gap-1 p-4">
+                {navLinks.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={(e) => handleNavClick(e, link.href)}
+                    className="rounded-xl px-4 py-3.5 text-base font-medium text-white transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </nav>
+              <p className="border-t border-white/20 px-6 py-4 text-xs text-white/70">
+                &copy; {new Date().getFullYear()} Kohinoor Decorations
+              </p>
+            </motion.aside>
+          </>
         )}
       </AnimatePresence>
     </header>

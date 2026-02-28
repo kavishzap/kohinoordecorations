@@ -4,7 +4,7 @@ import Image from "next/image"
 import { footerImages } from "@/lib/data"
 
 const quickLinks = [
-  { label: "About Hall", href: "#about" },
+  { label: "About Us", href: "#about" },
   { label: "Decorations", href: "#decorations" },
   { label: "Gallery", href: "#gallery" },
   { label: "Packages", href: "#packages" },
