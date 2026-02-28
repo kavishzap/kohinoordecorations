@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Open_Sans } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import CookieConsent from '@/components/CookieConsent'
 import './globals.css'
 
 const openSans = Open_Sans({
@@ -48,6 +49,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         {children}
         <Analytics />
+        <CookieConsent />
       </body>
     </html>
   )
