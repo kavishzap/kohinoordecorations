@@ -117,16 +117,16 @@ export default function Header() {
               }}
               aria-label="Mobile navigation"
             >
-              <div className="flex items-center justify-between px-6 py-4">
-                <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between gap-4 border-b border-white/20 px-6 py-4">
+                <div className="flex min-w-0 flex-1 flex-col items-start gap-1.5">
                   <Image
                     src="/logo/logo1.png"
                     alt="Kohinoor Decorations"
-                    width={130}
-                    height={44}
-                    className="h-9 w-auto sm:h-10"
+                    width={120}
+                    height={40}
+                    className="h-10 w-auto shrink-0 object-contain"
                   />
-                  <span className="font-serif text-xl font-semibold text-white sm:text-2xl">
+                  <span className="font-serif text-base font-semibold leading-tight text-white sm:text-lg">
                     Kohinoor Decorations
                   </span>
                 </div>

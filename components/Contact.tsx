@@ -4,7 +4,6 @@ import { useRef, useState } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import { MapPin, Phone, Mail } from "lucide-react"
 import SectionReveal from "./SectionReveal"
-import DecorativeDivider from "./DecorativeDivider"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -77,17 +76,26 @@ export default function Contact() {
   }
 
   return (
-    <section ref={sectionRef} id="contact" className="bg-secondary py-24">
-      <div className="mx-auto max-w-7xl px-6">
+    <section
+      ref={sectionRef}
+      id="contact"
+      className="relative -mt-1 overflow-hidden py-24 bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: `linear-gradient(to bottom, rgba(61,44,44,0.88), rgba(61,44,44,0.82)), url('/assets/hero3.jpeg')`,
+      }}
+    >
+      <div className="relative mx-auto max-w-7xl px-6">
         <SectionReveal>
           <motion.div className="mb-12 text-center" style={{ y: headingY }}>
-            <p className="text-sm font-medium uppercase tracking-widest text-primary">
+            <p className="text-sm font-medium uppercase tracking-widest text-white/90">
               Get in Touch
             </p>
-            <h2 className="mt-3 font-serif text-3xl font-semibold text-foreground sm:text-4xl text-balance">
+            <h2 className="mt-3 font-serif text-3xl font-semibold text-white sm:text-4xl text-balance">
               Contact Us
             </h2>
-            <DecorativeDivider className="mt-4" />
+            <div className="mt-4" aria-hidden>
+              <span className="block h-px w-20 mx-auto bg-white/50" />
+            </div>
           </motion.div>
         </SectionReveal>
 
@@ -195,20 +203,20 @@ export default function Contact() {
 
             {/* Details + Map - right on web, map extends to form height */}
             <div className="order-2 flex flex-1 flex-col gap-6 lg:min-h-0">
-              <h3 className="font-serif text-xl font-semibold text-foreground">
+              <h3 className="font-serif text-xl font-semibold text-white">
                 Kohinoor Decorations
               </h3>
               <div className="space-y-5">
                 {contactDetails.map(({ icon: Icon, label, value }) => (
                   <div key={label} className="flex items-start gap-3">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card shadow-sm">
-                      <Icon className="size-4 text-primary" />
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-white/10 shadow-sm">
+                      <Icon className="size-4 text-white/90" />
                     </div>
                     <div>
-                      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      <p className="text-xs font-medium uppercase tracking-wider text-white/70">
                         {label}
                       </p>
-                      <p className="mt-0.5 text-sm text-foreground">{value}</p>
+                      <p className="mt-0.5 text-sm text-white">{value}</p>
                     </div>
                   </div>
                 ))}
@@ -232,8 +240,8 @@ export default function Contact() {
           </div>
         </SectionReveal>
 
-        <div className="mt-20">
-          <DecorativeDivider />
+        <div className="mt-20" aria-hidden>
+          <span className="block h-px w-full max-w-xs mx-auto bg-white/30" />
         </div>
       </div>
     </section>
