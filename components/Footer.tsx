@@ -14,18 +14,18 @@ const quickLinks = [
 const socialLinks = [
   {
     label: "Instagram",
-    href: "#",
+    href: "https://www.instagram.com/kohinoor_decorations?igsh=MTJ4YnIxem4weDU4ZA%3D%3D&utm_source=qr",
     path: "M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z",
   },
   {
     label: "Facebook",
-    href: "#",
+    href: "https://www.facebook.com/share/1FEqiYRL53/?mibextid=wwXIfr",
     path: "M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z",
   },
   {
-    label: "Pinterest",
-    href: "#",
-    path: "M8 20l4-9m-2 1a4 4 0 1 1 0-8 4 4 0 0 1 0 8z",
+    label: "TikTok",
+    href: "https://www.tiktok.com/@kohinoor_decorations?_r=1&_t=ZS-94IKOTzQjb8",
+    path: "M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z",
   },
 ]
 
@@ -51,10 +51,19 @@ export default function Footer() {
         <div className="flex flex-col gap-10 md:flex-row md:justify-between">
           {/* Brand */}
           <div className="max-w-xs">
-            <p className="font-serif text-xl font-semibold text-white">
-              Kohinoor <span className="text-primary">Decorations</span>
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-white/60">
+            <div className="flex items-center gap-2">
+              <Image
+                src="/logo/logo1.png"
+                alt="Kohinoor Decorations"
+                width={140}
+                height={48}
+                className="h-10 w-auto"
+              />
+              <p className="font-serif text-xl font-semibold text-white">
+                Kohinoor <span className="text-primary">Decorations</span>
+              </p>
+            </div>
+            <p className="mt-3 text-sm leading-relaxed text-white/60">
               Decoration packages for weddings, receptions & every celebration.
             </p>
           </div>
@@ -109,8 +118,25 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs text-white/40">
-          &copy; {new Date().getFullYear()} Kohinoor Decorations. All rights reserved.
+        <div className="mt-10 flex flex-col items-center justify-center gap-4 border-t border-white/10 pt-6 text-center text-xs text-white/40">
+          <p>&copy; {new Date().getFullYear()} Kohinoor Decorations. All rights reserved.</p>
+          <div className="flex flex-col items-center justify-center gap-1">
+            <span>Developed by</span>
+            <a
+              href="https://mojhoa.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-opacity hover:opacity-100"
+            >
+              <Image
+                src="/logo/mk.png"
+                alt="Developer"
+                width={140}
+                height={56}
+                className="h-14 w-auto opacity-80"
+              />
+            </a>
+          </div>
         </div>
       </div>
     </footer>

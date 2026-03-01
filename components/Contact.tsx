@@ -53,8 +53,9 @@ export default function Contact() {
   const headingY = useTransform(scrollYProgress, [0, 0.3], [40, 0])
 
   const [fullName, setFullName] = useState("")
-  const [email, setEmail] = useState("")
   const [mobile, setMobile] = useState("")
+  const [weddingDate, setWeddingDate] = useState("")
+  const [locationOfEvent, setLocationOfEvent] = useState("")
   const [selectedPackage, setSelectedPackage] = useState("")
   const [specialRequest, setSpecialRequest] = useState("")
 
@@ -63,8 +64,9 @@ export default function Contact() {
       "New enquiry from Kohinoor Decorations website",
       "",
       `Full name: ${fullName || "-"}`,
-      `Email: ${email || "-"}`,
       `Mobile: ${mobile || "-"}`,
+      `Client wedding date: ${weddingDate || "-"}`,
+      `Location of event: ${locationOfEvent || "-"}`,
       `Package: ${selectedPackage || "-"}`,
       "",
       "Special request:",
@@ -113,17 +115,6 @@ export default function Contact() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="contact-email">Email</Label>
-                  <Input
-                    id="contact-email"
-                    type="email"
-                    placeholder="your@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="h-10"
-                  />
-                </div>
-                <div className="space-y-2">
                   <Label htmlFor="contact-mobile">Mobile phone</Label>
                   <Input
                     id="contact-mobile"
@@ -131,6 +122,27 @@ export default function Contact() {
                     placeholder="Your mobile number"
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
+                    className="h-10"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contact-wedding-date">Client wedding date</Label>
+                  <Input
+                    id="contact-wedding-date"
+                    type="date"
+                    value={weddingDate}
+                    onChange={(e) => setWeddingDate(e.target.value)}
+                    className="h-10"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contact-location">Location of event</Label>
+                  <Input
+                    id="contact-location"
+                    type="text"
+                    placeholder="Event venue or address"
+                    value={locationOfEvent}
+                    onChange={(e) => setLocationOfEvent(e.target.value)}
                     className="h-10"
                   />
                 </div>

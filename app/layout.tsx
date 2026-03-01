@@ -11,26 +11,27 @@ const openSans = Open_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'Floral Romantic | Wedding Hall Decor Showcase',
+  title: 'Kohinoor Decorations',
   description:
     'Exquisite floral decor setups for Haldi, Mehendi, Reception & Special Events. Browse our decoration themes, gallery, and packages.',
   generator: 'v0.app',
   icons: {
     icon: [
       {
-        url: '/icon-light-32x32.png',
+        url: '/logo/logo1.png',
         media: '(prefers-color-scheme: light)',
       },
       {
-        url: '/icon-dark-32x32.png',
+        url: '/logo/logo1.png',
         media: '(prefers-color-scheme: dark)',
       },
       {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
+        url: '/logo/logo1.png',
+        sizes: '32x32',
+        type: 'image/png',
       },
     ],
-    apple: '/apple-icon.png',
+    apple: '/logo/logo1.png',
   },
 }
 

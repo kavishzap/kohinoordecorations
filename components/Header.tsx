@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X } from "lucide-react"
 
@@ -52,11 +53,18 @@ export default function Header() {
       }
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <a
-          href="#"
-          className="font-serif text-2xl font-semibold tracking-tight text-white transition-colors hover:text-white/90"
-        >
-          Kohinoor <span className="text-white">Decorations</span>
+        <a href="#" className="flex items-center gap-2 transition-opacity hover:opacity-90">
+          <Image
+            src="/logo/logo1.png"
+            alt="Kohinoor Decorations"
+            width={140}
+            height={48}
+            className="h-10 w-auto sm:h-12"
+            priority
+          />
+          <span className="font-serif text-2xl font-semibold tracking-tight text-white">
+            Kohinoor <span className="text-white">Decorations</span>
+          </span>
         </a>
 
         {/* Desktop nav */}
@@ -110,9 +118,18 @@ export default function Header() {
               aria-label="Mobile navigation"
             >
               <div className="flex items-center justify-between px-6 py-4">
-                <span className="font-serif text-xl font-semibold text-white sm:text-2xl">
-                  Kohinoor Decorations
-                </span>
+                <div className="flex items-center gap-2">
+                  <Image
+                    src="/logo/logo1.png"
+                    alt="Kohinoor Decorations"
+                    width={130}
+                    height={44}
+                    className="h-9 w-auto sm:h-10"
+                  />
+                  <span className="font-serif text-xl font-semibold text-white sm:text-2xl">
+                    Kohinoor Decorations
+                  </span>
+                </div>
                 <button
                   className="rounded-lg p-2 text-white transition-colors hover:bg-white/10"
                   onClick={() => setMobileOpen(false)}
