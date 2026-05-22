@@ -4,9 +4,10 @@ import Image from "next/image"
 import { footerImages } from "@/lib/data"
 
 const quickLinks = [
-  { label: "About Us", href: "#about" },
   { label: "Decorations", href: "#decorations" },
   { label: "Gallery", href: "#gallery" },
+  { label: "Videos", href: "#videos" },
+  { label: "About Us", href: "#about" },
   { label: "Packages", href: "#packages" },
   { label: "Contact", href: "#contact" },
 ]
@@ -120,23 +121,17 @@ export default function Footer() {
 
         <div className="mt-10 flex flex-col items-center justify-center gap-4 border-t border-white/10 pt-6 text-center text-xs text-white/40">
           <p>&copy; {new Date().getFullYear()} Kohinoor Decorations. All rights reserved.</p>
-          <div className="flex flex-col items-center justify-center gap-1">
-            <span>Developed by</span>
+          <p>
+            Designed by{" "}
             <a
               href="https://mojhoa.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="transition-opacity hover:opacity-100"
+              className="text-white/60 transition-colors hover:text-primary"
             >
-              <Image
-                src="/logo/mk.png"
-                alt="Developer"
-                width={140}
-                height={56}
-                className="h-14 w-auto opacity-80"
-              />
+              Mojhoa Automations LTD
             </a>
-          </div>
+          </p>
         </div>
       </div>
     </footer>

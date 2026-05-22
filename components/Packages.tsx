@@ -3,7 +3,11 @@
 import { useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import { Star } from "lucide-react"
-import { weddingTypePackages } from "@/lib/data"
+import {
+  formatPackageSelectValue,
+  storeSelectedPackage,
+  weddingTypePackages,
+} from "@/lib/data"
 import SectionReveal from "./SectionReveal"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
@@ -125,6 +129,14 @@ export default function Packages() {
 
                         <a
                           href="#contact"
+                          onClick={() =>
+                            storeSelectedPackage(
+                              formatPackageSelectValue(
+                                weddingType.label,
+                                pkg.name,
+                              ),
+                            )
+                          }
                           className={`mt-6 flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold transition-all ${buttonStyles}`}
                         >
                           Get Started

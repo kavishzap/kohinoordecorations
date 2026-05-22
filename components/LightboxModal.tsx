@@ -2,10 +2,8 @@
 
 import { useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import Image from "next/image"
 import { ChevronLeft, ChevronRight, X } from "lucide-react"
 import type { GalleryItem } from "@/lib/data"
-import { galleryTabs } from "@/lib/data"
 
 interface LightboxModalProps {
   items: GalleryItem[]
@@ -44,76 +42,63 @@ export default function LightboxModal({
     }
   }, [onClose, goPrev, goNext])
 
+  if (!item) return null
+
   return (
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-[#3D2C2C]/80 backdrop-blur-sm"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-[#3D2C2C]/90 backdrop-blur-sm"
         onClick={onClose}
         role="dialog"
         aria-modal="true"
-        aria-label={`Image: ${item.title}`}
+        aria-label="Photo viewer"
       >
+        <button
+          type="button"
+          onClick={onClose}
+          className="fixed top-3 right-3 z-[60] flex size-10 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition-colors hover:bg-white/25 sm:top-4 sm:right-4"
+          aria-label="Close lightbox"
+        >
+          <X className="size-5 sm:size-6" />
+        </button>
+
         <motion.div
-          initial={{ scale: 0.96, opacity: 0 }}
+          initial={{ scale: 0.98, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.96, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="relative mx-4 max-h-[90vh] max-w-5xl w-full"
+          exit={{ scale: 0.98, opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          className="relative flex max-h-[96dvh] max-w-[96vw] items-center justify-center"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Close button */}
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={item.image}
+              src={item.image}
+              alt=""
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              draggable={false}
+              className="block max-h-[96dvh] max-w-[96vw] h-auto w-auto rounded-lg object-contain shadow-2xl sm:max-h-[92dvh] sm:max-w-[min(92vw,1200px)] sm:rounded-2xl"
+            />
+          </AnimatePresence>
+
           <button
-            onClick={onClose}
-            className="absolute -top-12 right-0 text-white/70 transition-colors hover:text-white"
-            aria-label="Close lightbox"
-          >
-            <X className="size-6" />
-          </button>
-
-          {/* Image */}
-          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-[#3D2C2C]/40">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="absolute inset-0"
-              >
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  className="object-contain"
-                  sizes="(max-width: 1024px) 95vw, 80vw"
-                />
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* Caption */}
-          <div className="mt-4 text-center">
-            <p className="text-xs font-medium uppercase tracking-wider text-white/60">
-              {galleryTabs.find((t) => t.value === item.category)?.label ?? item.category}
-            </p>
-            <p className="mt-1 font-serif text-lg text-white">{item.title}</p>
-          </div>
-
-          {/* Navigation */}
-          <button
+            type="button"
             onClick={goPrev}
-            className="absolute left-2 top-1/2 -translate-y-1/2 flex size-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+            className="absolute left-1 top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/55 sm:-left-14 sm:size-10 sm:bg-white/10 sm:hover:bg-white/20"
             aria-label="Previous image"
           >
             <ChevronLeft className="size-5" />
           </button>
           <button
+            type="button"
             onClick={goNext}
-            className="absolute right-2 top-1/2 -translate-y-1/2 flex size-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+            className="absolute right-1 top-1/2 z-10 flex size-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-colors hover:bg-black/55 sm:-right-14 sm:size-10 sm:bg-white/10 sm:hover:bg-white/20"
             aria-label="Next image"
           >
             <ChevronRight className="size-5" />

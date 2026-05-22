@@ -1,21 +1,100 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import Image from "next/image"
-import { galleryItems, galleryTabs } from "@/lib/data"
+import {
+  galleryItems,
+  galleryTabs,
+  galleryBucketByCategory,
+} from "@/lib/data"
+import type { GalleryItem } from "@/lib/data"
 import LightboxModal from "./LightboxModal"
 import SectionReveal from "./SectionReveal"
 import DecorativeDivider from "./DecorativeDivider"
+import { GalleryGridSkeleton } from "./skeletons/MediaSkeletons"
+import GalleryImage from "./GalleryImage"
+import VideoSection from "./VideoSection"
+
+function mapStorageImagesToGalleryItems(
+  category: string,
+  images: { src: string; label: string }[],
+): GalleryItem[] {
+  const idBase = category.split("").reduce((n, c) => n + c.charCodeAt(0), 0) * 1000
+  return images.map((img, i) => ({
+    id: idBase + i,
+    category,
+    title: "",
+    image: img.src,
+  }))
+}
 
 export default function GalleryTabs() {
   const [activeTab, setActiveTab] = useState("all")
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null)
+  const [remoteByCategory, setRemoteByCategory] = useState<
+    Record<string, GalleryItem[]>
+  >({})
+  const [loadingFolders, setLoadingFolders] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadStorageGalleries() {
+      setLoadingFolders(true)
+      const entries = await Promise.all(
+        Object.entries(galleryBucketByCategory).map(
+          async ([category, bucketFolder]) => {
+            try {
+              const res = await fetch(`/api/decorations/${bucketFolder}`, {
+                cache: "no-store",
+              })
+              if (!res.ok) return [category, []] as const
+              const json = (await res.json()) as {
+                images?: { src: string; label: string }[]
+              }
+              const items = mapStorageImagesToGalleryItems(
+                category,
+                json.images ?? [],
+              )
+              return [category, items] as const
+            } catch (err) {
+              console.warn(`[gallery] ${category}:`, err)
+              return [category, []] as const
+            }
+          },
+        ),
+      )
+
+      if (!cancelled) {
+        setRemoteByCategory(Object.fromEntries(entries))
+        setLoadingFolders(false)
+      }
+    }
+
+    loadStorageGalleries()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const allItems = useMemo(() => {
+    const bucketCategories = new Set(Object.keys(galleryBucketByCategory))
+    const staticFallback = galleryItems.filter(
+      (item) => !bucketCategories.has(item.category),
+    )
+    const remoteItems = Object.values(remoteByCategory).flat()
+    return [...staticFallback, ...remoteItems]
+  }, [remoteByCategory])
 
   const filtered =
     activeTab === "all"
-      ? galleryItems
-      : galleryItems.filter((item) => item.category === activeTab)
+      ? allItems
+      : allItems.filter((item) => item.category === activeTab)
+
+
+  useEffect(() => {
+    setLightboxIdx(null)
+  }, [activeTab])
 
   return (
     <section id="gallery" className="bg-background py-24">
@@ -59,64 +138,60 @@ export default function GalleryTabs() {
         </SectionReveal>
 
         {/* Grid */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.35 }}
-            className="columns-1 gap-4 sm:columns-2 lg:columns-3"
-          >
-            {filtered.map((item, i) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05, duration: 0.4 }}
-                className="mb-4 break-inside-avoid"
-              >
-                <button
-                  onClick={() => setLightboxIdx(i)}
-                  className="group relative block w-full overflow-hidden rounded-2xl shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                  aria-label={`View ${item.title}`}
+        {loadingFolders ? (
+          <GalleryGridSkeleton count={activeTab === "all" ? 9 : 6} />
+        ) : filtered.length === 0 ? (
+          <div className="flex min-h-[240px] items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 text-center text-sm leading-relaxed text-muted-foreground">
+            {activeTab === "all"
+              ? "Our gallery is being updated with new celebration photos. Please check back soon."
+              : `Photos for ${galleryTabs.find((t) => t.value === activeTab)?.label ?? "this collection"} will appear here soon. Contact us to see more examples.`}
+          </div>
+        ) : (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.35 }}
+              className="columns-1 gap-4 sm:columns-2 lg:columns-3"
+            >
+              {filtered.map((item, i) => (
+                <motion.div
+                  key={`${item.category}-${item.id}`}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05, duration: 0.4 }}
+                  className="mb-4 break-inside-avoid"
                 >
-                  <div
-                    className={`relative w-full ${
-                      i % 3 === 0
-                        ? "aspect-[3/4]"
-                        : i % 3 === 1
-                        ? "aspect-square"
-                        : "aspect-[4/3]"
-                    }`}
+                  <button
+                    onClick={() => setLightboxIdx(i)}
+                    className="group relative block w-full overflow-hidden rounded-2xl shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    aria-label={`View photo ${i + 1}`}
                   >
-                    <Image
+                    <GalleryImage
                       src={item.image}
-                      alt={item.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-103"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      alt=""
+                      aspectClassName={
+                        i % 3 === 0
+                          ? "relative w-full aspect-[3/4]"
+                          : i % 3 === 1
+                            ? "relative w-full aspect-square"
+                            : "relative w-full aspect-[4/3]"
+                      }
+                      className="transition-transform duration-500 group-hover:scale-103"
                     />
-                  </div>
-                  <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-[#3D2C2C]/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <div className="p-4">
-                      <span className="text-xs font-medium uppercase tracking-wider text-white/80">
-                        {galleryTabs.find((t) => t.value === item.category)?.label ?? item.category}
-                      </span>
-                      <p className="mt-0.5 text-sm font-medium text-white">
-                        {item.title}
-                      </p>
-                    </div>
-                  </div>
-                </button>
-              </motion.div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
+                  </button>
+                </motion.div>
+              ))}
+            </motion.div>
+          </AnimatePresence>
+        )}
+
+        <VideoSection embedded />
       </div>
 
-      {/* Lightbox */}
-      {lightboxIdx !== null && (
+      {lightboxIdx !== null && filtered.length > 0 && (
         <LightboxModal
           items={filtered}
           currentIndex={lightboxIdx}

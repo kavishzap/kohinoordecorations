@@ -72,20 +72,20 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: '/logo/logo1.png',
+        url: '/logo/logo.png',
         media: '(prefers-color-scheme: light)',
       },
       {
-        url: '/logo/logo1.png',
+        url: '/logo/logo.png',
         media: '(prefers-color-scheme: dark)',
       },
       {
-        url: '/logo/logo1.png',
+        url: '/logo/logo.png',
         sizes: '32x32',
         type: 'image/png',
       },
     ],
-    apple: '/logo/logo1.png',
+    apple: '/logo/logo.png',
   },
 }
 
@@ -122,7 +122,7 @@ export default function RootLayout({
           latitude: -20.424073553805545,
           longitude: 57.61624551111114,
         },
-        image: [`${SITE_URL}/assets/hero3.jpeg`, `${SITE_URL}/logo/logo1.png`],
+        image: [`${SITE_URL}/assets/hero3.jpeg`, `${SITE_URL}/logo/logo.png`],
         priceRange: 'Rs 15,000 - Rs 75,000+',
         areaServed: { '@type': 'Country', name: 'Mauritius' },
         openingHoursSpecification: { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], opens: '09:00', closes: '18:00' },

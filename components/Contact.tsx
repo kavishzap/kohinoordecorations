@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect, useCallback } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import { MapPin, Phone, Mail } from "lucide-react"
 import SectionReveal from "./SectionReveal"
@@ -13,10 +13,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { weddingTypePackages } from "@/lib/data"
+import {
+  PACKAGE_SELECT_EVENT,
+  PACKAGE_SELECT_STORAGE_KEY,
+  packageSelectOptions,
+} from "@/lib/data"
 
 const MAP_LINK = "https://maps.app.goo.gl/rLmKuS5SccYtRErTA"
 const WHATSAPP_NUMBER = "23058331197"
+const PHONE_TEL = "+23058331197"
 
 const contactDetails = [
   {
@@ -28,6 +33,7 @@ const contactDetails = [
     icon: Phone,
     label: "Phone",
     value: "5833 1197",
+    href: `tel:${PHONE_TEL}`,
   },
   {
     icon: Mail,
@@ -35,13 +41,6 @@ const contactDetails = [
     value: "usahadut@gmail.com",
   },
 ]
-
-const packageOptions = weddingTypePackages.flatMap((type) =>
-  type.packages.map((pkg) => ({
-    value: `${type.label} - ${pkg.name}`,
-    label: `${type.label} - ${pkg.name}`,
-  }))
-)
 
 export default function Contact() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -57,6 +56,39 @@ export default function Contact() {
   const [locationOfEvent, setLocationOfEvent] = useState("")
   const [selectedPackage, setSelectedPackage] = useState("")
   const [specialRequest, setSpecialRequest] = useState("")
+
+  const applySelectedPackage = useCallback((value: string) => {
+    if (packageSelectOptions.some((opt) => opt.value === value)) {
+      setSelectedPackage(value)
+    }
+  }, [])
+
+  useEffect(() => {
+    function readStoredPackage() {
+      const stored = sessionStorage.getItem(PACKAGE_SELECT_STORAGE_KEY)
+      if (!stored) return
+      applySelectedPackage(stored)
+      sessionStorage.removeItem(PACKAGE_SELECT_STORAGE_KEY)
+    }
+
+    readStoredPackage()
+
+    const onPackageSelected = (event: Event) => {
+      const value = (event as CustomEvent<string>).detail
+      if (value) applySelectedPackage(value)
+    }
+
+    const onHashChange = () => {
+      if (window.location.hash === "#contact") readStoredPackage()
+    }
+
+    window.addEventListener(PACKAGE_SELECT_EVENT, onPackageSelected)
+    window.addEventListener("hashchange", onHashChange)
+    return () => {
+      window.removeEventListener(PACKAGE_SELECT_EVENT, onPackageSelected)
+      window.removeEventListener("hashchange", onHashChange)
+    }
+  }, [applySelectedPackage])
 
   const handleSendMessage = () => {
     const lines = [
@@ -164,7 +196,7 @@ export default function Contact() {
                       <SelectValue placeholder="Choose a package" />
                     </SelectTrigger>
                     <SelectContent>
-                      {packageOptions.map((opt) => (
+                      {packageSelectOptions.map((opt) => (
                         <SelectItem key={opt.value} value={opt.value}>
                           {opt.label}
                         </SelectItem>
@@ -207,7 +239,7 @@ export default function Contact() {
                 Kohinoor Decorations
               </h3>
               <div className="space-y-5">
-                {contactDetails.map(({ icon: Icon, label, value }) => (
+                {contactDetails.map(({ icon: Icon, label, value, href }) => (
                   <div key={label} className="flex items-start gap-3">
                     <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-white/10 shadow-sm">
                       <Icon className="size-4 text-white/90" />
@@ -216,7 +248,16 @@ export default function Contact() {
                       <p className="text-xs font-medium uppercase tracking-wider text-white/70">
                         {label}
                       </p>
-                      <p className="mt-0.5 text-sm text-white">{value}</p>
+                      {href ? (
+                        <a
+                          href={href}
+                          className="mt-0.5 inline-block text-sm text-white underline-offset-4 transition-colors hover:text-white/90 hover:underline"
+                        >
+                          {value}
+                        </a>
+                      ) : (
+                        <p className="mt-0.5 text-sm text-white">{value}</p>
+                      )}
                     </div>
                   </div>
                 ))}
