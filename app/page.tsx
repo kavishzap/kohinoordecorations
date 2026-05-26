@@ -1,7 +1,6 @@
 import Header from "@/components/Header"
 import HeroSlider from "@/components/HeroSlider"
 import About from "@/components/About"
-import Themes from "@/components/Themes"
 import GalleryTabs from "@/components/GalleryTabs"
 import Packages from "@/components/Packages"
 import Contact from "@/components/Contact"
@@ -14,7 +13,6 @@ export default function Home() {
       <Header />
       <main>
         <HeroSlider />
-        <Themes />
         <GalleryTabs />
         <About />
         <Packages />

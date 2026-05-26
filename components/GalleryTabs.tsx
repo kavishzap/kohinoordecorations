@@ -1,150 +1,145 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  galleryItems,
-  galleryTabs,
-  galleryBucketByCategory,
-} from "@/lib/data"
-import type { GalleryItem } from "@/lib/data"
-import LightboxModal from "./LightboxModal"
+  filterGroupsByTab,
+  type DecorationGroupSummary,
+  type MediaSlideDescriptor,
+} from "@/lib/decoration-group-utils"
+import { useDecorationGroups } from "@/lib/use-decoration-groups"
+import DecorationGroupCard from "./DecorationGroupCard"
+import DecorationMediaModal from "./DecorationMediaModal"
 import SectionReveal from "./SectionReveal"
 import DecorativeDivider from "./DecorativeDivider"
-import { GalleryGridSkeleton } from "./skeletons/MediaSkeletons"
-import GalleryImage from "./GalleryImage"
-import VideoSection from "./VideoSection"
-
-function mapStorageImagesToGalleryItems(
-  category: string,
-  images: { src: string; label: string }[],
-): GalleryItem[] {
-  const idBase = category.split("").reduce((n, c) => n + c.charCodeAt(0), 0) * 1000
-  return images.map((img, i) => ({
-    id: idBase + i,
-    category,
-    title: "",
-    image: img.src,
-  }))
-}
+import { PackageCardsSkeleton } from "./skeletons/MediaSkeletons"
 
 export default function GalleryTabs() {
-  const [activeTab, setActiveTab] = useState("all")
-  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null)
-  const [remoteByCategory, setRemoteByCategory] = useState<
-    Record<string, GalleryItem[]>
-  >({})
-  const [loadingFolders, setLoadingFolders] = useState(true)
+  const { groups, tabs, loading } = useDecorationGroups()
+  const [activeTab, setActiveTab] = useState("")
+
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalGroupId, setModalGroupId] = useState<string | null>(null)
+  const [modalSlides, setModalSlides] = useState<MediaSlideDescriptor[]>([])
+  const [modalFrontUrl, setModalFrontUrl] = useState<string | null>(null)
+  const [modalLoading, setModalLoading] = useState(false)
+  const [modalError, setModalError] = useState(false)
+  const [loadingGroupId, setLoadingGroupId] = useState<string | null>(null)
+
+  const defaultTab = tabs[0]?.value ?? ""
 
   useEffect(() => {
-    let cancelled = false
+    if (!defaultTab) return
+    if (!activeTab || !tabs.some((t) => t.value === activeTab)) {
+      setActiveTab(defaultTab)
+    }
+  }, [tabs, activeTab, defaultTab])
 
-    async function loadStorageGalleries() {
-      setLoadingFolders(true)
-      const entries = await Promise.all(
-        Object.entries(galleryBucketByCategory).map(
-          async ([category, bucketFolder]) => {
-            try {
-              const res = await fetch(`/api/decorations/${bucketFolder}`, {
-                cache: "no-store",
-              })
-              if (!res.ok) return [category, []] as const
-              const json = (await res.json()) as {
-                images?: { src: string; label: string }[]
-              }
-              const items = mapStorageImagesToGalleryItems(
-                category,
-                json.images ?? [],
-              )
-              return [category, items] as const
-            } catch (err) {
-              console.warn(`[gallery] ${category}:`, err)
-              return [category, []] as const
-            }
-          },
-        ),
-      )
+  const filtered = useMemo(
+    () => filterGroupsByTab(groups, activeTab),
+    [groups, activeTab],
+  )
 
-      if (!cancelled) {
-        setRemoteByCategory(Object.fromEntries(entries))
-        setLoadingFolders(false)
+  const activeLabel =
+    tabs.find((t) => t.value === activeTab)?.label ?? "this collection"
+
+  async function handleSeeBundle(group: DecorationGroupSummary) {
+    setLoadingGroupId(group.id)
+    setModalGroupId(group.id)
+    setModalSlides([])
+    setModalFrontUrl(group.frontUrl)
+    setModalError(false)
+    setModalOpen(true)
+    setModalLoading(true)
+
+    try {
+      const res = await fetch(`/api/decoration-groups/${group.id}`, {
+        cache: "no-store",
+      })
+      if (!res.ok) throw new Error("Failed to load")
+      const json = (await res.json()) as {
+        group?: { slides?: MediaSlideDescriptor[] }
       }
+      if (!json.group?.slides?.length) throw new Error("No slides")
+      setModalSlides(json.group.slides)
+    } catch {
+      setModalError(true)
+    } finally {
+      setModalLoading(false)
+      setLoadingGroupId(null)
     }
+  }
 
-    loadStorageGalleries()
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
-  const allItems = useMemo(() => {
-    const bucketCategories = new Set(Object.keys(galleryBucketByCategory))
-    const staticFallback = galleryItems.filter(
-      (item) => !bucketCategories.has(item.category),
-    )
-    const remoteItems = Object.values(remoteByCategory).flat()
-    return [...staticFallback, ...remoteItems]
-  }, [remoteByCategory])
-
-  const filtered =
-    activeTab === "all"
-      ? allItems
-      : allItems.filter((item) => item.category === activeTab)
-
-
-  useEffect(() => {
-    setLightboxIdx(null)
-  }, [activeTab])
+  function closeModal() {
+    setModalOpen(false)
+    setModalGroupId(null)
+    setModalSlides([])
+    setModalFrontUrl(null)
+    setModalError(false)
+  }
 
   return (
-    <section id="gallery" className="bg-background py-24">
+    <section id="decorations" className="bg-secondary py-24">
       <div className="mx-auto max-w-7xl px-6">
         <SectionReveal>
           <div className="mb-12 text-center">
             <p className="text-sm font-medium uppercase tracking-widest text-primary">
-              Portfolio
+              Our Work
             </p>
             <h2 className="mt-3 font-serif text-3xl font-semibold text-foreground sm:text-4xl text-balance">
-              Featured Gallery
+              Decoration Themes
             </h2>
             <DecorativeDivider className="mt-4" />
+            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground leading-relaxed">
+              Browse our reception, haldi, mehendi, wedding, and venue styling.
+              Filter by category to explore recent celebrations.
+            </p>
           </div>
         </SectionReveal>
 
-        {/* Tab bar */}
-        <SectionReveal delay={0.1}>
-          <div className="mb-10 flex flex-wrap justify-center gap-2">
-            {galleryTabs.map((tab) => (
-              <button
-                key={tab.value}
-                onClick={() => setActiveTab(tab.value)}
-                className={`relative rounded-full px-5 py-2 text-sm font-medium transition-colors ${
-                  activeTab === tab.value
-                    ? "text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {activeTab === tab.value && (
-                  <motion.span
-                    layoutId="gallery-tab-bg"
-                    className="absolute inset-0 rounded-full bg-primary"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
-                <span className="relative z-10">{tab.label}</span>
-              </button>
+        <SectionReveal delay={0.1} className="w-full">
+          <nav
+            className="mb-10 flex w-full flex-wrap items-center justify-center gap-2"
+            aria-label="Decoration categories"
+          >
+            {tabs.map((tab) => (
+                <button
+                  key={tab.value}
+                  type="button"
+                  onClick={() => setActiveTab(tab.value)}
+                  className={`relative rounded-full px-5 py-2 text-sm font-medium transition-colors ${
+                    activeTab === tab.value
+                      ? "text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {activeTab === tab.value && (
+                    <motion.span
+                      layoutId="decoration-tab-bg"
+                      className="absolute inset-0 rounded-full bg-primary"
+                      transition={{
+                        type: "spring",
+                        stiffness: 380,
+                        damping: 30,
+                      }}
+                    />
+                  )}
+                  <span className="relative z-10">{tab.label}</span>
+                </button>
             ))}
-          </div>
+          </nav>
         </SectionReveal>
 
-        {/* Grid */}
-        {loadingFolders ? (
-          <GalleryGridSkeleton count={activeTab === "all" ? 9 : 6} />
+        {loading ? (
+          <PackageCardsSkeleton count={6} />
+        ) : tabs.length === 0 ? (
+          <div className="flex min-h-[240px] items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 text-center text-sm leading-relaxed text-muted-foreground">
+            Our decoration photos are being updated. Please check back soon.
+          </div>
         ) : filtered.length === 0 ? (
           <div className="flex min-h-[240px] items-center justify-center rounded-2xl border border-dashed border-border bg-card/40 px-6 text-center text-sm leading-relaxed text-muted-foreground">
-            {activeTab === "all"
-              ? "Our gallery is being updated with new celebration photos. Please check back soon."
-              : `Photos for ${galleryTabs.find((t) => t.value === activeTab)?.label ?? "this collection"} will appear here soon. Contact us to see more examples.`}
+            Photos for {activeLabel} will appear here soon. Contact us to see
+            more examples.
           </div>
         ) : (
           <AnimatePresence mode="wait">
@@ -154,51 +149,36 @@ export default function GalleryTabs() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.35 }}
-              className="columns-1 gap-4 sm:columns-2 lg:columns-3"
+              className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
             >
-              {filtered.map((item, i) => (
+              {filtered.map((group, i) => (
                 <motion.div
-                  key={`${item.category}-${item.id}`}
+                  key={group.id}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05, duration: 0.4 }}
-                  className="mb-4 break-inside-avoid"
                 >
-                  <button
-                    onClick={() => setLightboxIdx(i)}
-                    className="group relative block w-full overflow-hidden rounded-2xl shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                    aria-label={`View photo ${i + 1}`}
-                  >
-                    <GalleryImage
-                      src={item.image}
-                      alt=""
-                      aspectClassName={
-                        i % 3 === 0
-                          ? "relative w-full aspect-[3/4]"
-                          : i % 3 === 1
-                            ? "relative w-full aspect-square"
-                            : "relative w-full aspect-[4/3]"
-                      }
-                      className="transition-transform duration-500 group-hover:scale-103"
-                    />
-                  </button>
+                  <DecorationGroupCard
+                    group={group}
+                    onSeeBundle={handleSeeBundle}
+                    loadingDetail={loadingGroupId === group.id}
+                  />
                 </motion.div>
               ))}
             </motion.div>
           </AnimatePresence>
         )}
-
-        <VideoSection embedded />
       </div>
 
-      {lightboxIdx !== null && filtered.length > 0 && (
-        <LightboxModal
-          items={filtered}
-          currentIndex={lightboxIdx}
-          onClose={() => setLightboxIdx(null)}
-          onNavigate={setLightboxIdx}
-        />
-      )}
+      <DecorationMediaModal
+        open={modalOpen}
+        onClose={closeModal}
+        groupId={modalGroupId}
+        slides={modalSlides ?? []}
+        initialFrontUrl={modalFrontUrl}
+        loadingMeta={modalLoading}
+        error={modalError}
+      />
     </section>
   )
 }

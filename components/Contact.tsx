@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState, useEffect, useCallback } from "react"
+import { useRef, useState, useEffect, useCallback, useMemo } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
 import { MapPin, Phone, Mail } from "lucide-react"
 import SectionReveal from "./SectionReveal"
@@ -16,31 +16,16 @@ import {
 import {
   PACKAGE_SELECT_EVENT,
   PACKAGE_SELECT_STORAGE_KEY,
-  packageSelectOptions,
 } from "@/lib/data"
-
-const MAP_LINK = "https://maps.app.goo.gl/rLmKuS5SccYtRErTA"
-const WHATSAPP_NUMBER = "23058331197"
-const PHONE_TEL = "+23058331197"
-
-const contactDetails = [
-  {
-    icon: MapPin,
-    label: "Address",
-    value: "La rosa link road mdalbert",
-  },
-  {
-    icon: Phone,
-    label: "Phone",
-    value: "5833 1197",
-    href: `tel:${PHONE_TEL}`,
-  },
-  {
-    icon: Mail,
-    label: "Email",
-    value: "usahadut@gmail.com",
-  },
-]
+import { useCompany } from "@/lib/use-company"
+import { usePackages } from "@/lib/use-packages"
+import {
+  formatPhoneDisplay,
+  isGoogleMapsEmbedUrl,
+  mailtoHref,
+  phoneToTelHref,
+  phoneToWhatsAppId,
+} from "@/lib/company-utils"
 
 export default function Contact() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -50,6 +35,9 @@ export default function Contact() {
   })
   const headingY = useTransform(scrollYProgress, [0, 0.3], [40, 0])
 
+  const { company, loading: companyLoading } = useCompany()
+  const { selectOptions: packageSelectOptions } = usePackages()
+
   const [fullName, setFullName] = useState("")
   const [mobile, setMobile] = useState("")
   const [weddingDate, setWeddingDate] = useState("")
@@ -57,11 +45,59 @@ export default function Contact() {
   const [selectedPackage, setSelectedPackage] = useState("")
   const [specialRequest, setSpecialRequest] = useState("")
 
-  const applySelectedPackage = useCallback((value: string) => {
-    if (packageSelectOptions.some((opt) => opt.value === value)) {
-      setSelectedPackage(value)
-    }
-  }, [])
+  const whatsappId = useMemo(
+    () => (company?.phone ? phoneToWhatsAppId(company.phone) : ""),
+    [company?.phone],
+  )
+
+  const contactDetails = useMemo(() => {
+    if (!company) return []
+
+    const phoneDisplay = formatPhoneDisplay(company.phone)
+    const phoneHref = phoneToTelHref(company.phone)
+    const emailHref = mailtoHref(company.email)
+
+    return [
+      company.address
+        ? {
+            icon: MapPin,
+            label: "Address",
+            value: company.address,
+            href: company.googleMapLocation || undefined,
+          }
+        : null,
+      phoneDisplay
+        ? {
+            icon: Phone,
+            label: "Phone",
+            value: phoneDisplay,
+            href: phoneHref || undefined,
+          }
+        : null,
+      company.email
+        ? {
+            icon: Mail,
+            label: "Email",
+            value: company.email,
+            href: emailHref || undefined,
+          }
+        : null,
+    ].filter(Boolean) as {
+      icon: typeof MapPin
+      label: string
+      value: string
+      href?: string
+    }[]
+  }, [company])
+
+  const applySelectedPackage = useCallback(
+    (value: string) => {
+      if (packageSelectOptions.some((opt) => opt.value === value)) {
+        setSelectedPackage(value)
+      }
+    },
+    [packageSelectOptions],
+  )
 
   useEffect(() => {
     function readStoredPackage() {
@@ -91,6 +127,8 @@ export default function Contact() {
   }, [applySelectedPackage])
 
   const handleSendMessage = () => {
+    if (!whatsappId) return
+
     const lines = [
       "New enquiry from Kohinoor Decorations website",
       "",
@@ -104,8 +142,22 @@ export default function Contact() {
       specialRequest || "-",
     ]
     const text = encodeURIComponent(lines.join("\n"))
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, "_blank", "noopener,noreferrer")
+    window.open(`https://wa.me/${whatsappId}?text=${text}`, "_blank", "noopener,noreferrer")
   }
+
+  const mapEmbedUrl =
+    company?.googleMapLocation && isGoogleMapsEmbedUrl(company.googleMapLocation)
+      ? company.googleMapLocation
+      : null
+
+  const mapLinkUrl =
+    company?.googleMapLocation && !isGoogleMapsEmbedUrl(company.googleMapLocation)
+      ? company.googleMapLocation
+      : null
+
+  const whatsappLabel = company?.phone
+    ? `Send message to ${formatPhoneDisplay(company.phone)}`
+    : "Send message on WhatsApp"
 
   return (
     <section
@@ -218,7 +270,8 @@ export default function Contact() {
                 <button
                   type="button"
                   onClick={handleSendMessage}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#20bd5a]"
+                  disabled={!whatsappId}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#20bd5a] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <svg
                     className="size-5 shrink-0"
@@ -228,7 +281,7 @@ export default function Contact() {
                   >
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                   </svg>
-                  Send message to +230 5833 1197
+                  {whatsappLabel}
                 </button>
               </div>
             </div>
@@ -238,44 +291,77 @@ export default function Contact() {
               <h3 className="font-serif text-xl font-semibold text-white">
                 Kohinoor Decorations
               </h3>
-              <div className="space-y-5">
-                {contactDetails.map(({ icon: Icon, label, value, href }) => (
-                  <div key={label} className="flex items-start gap-3">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-white/10 shadow-sm">
-                      <Icon className="size-4 text-white/90" />
+              {companyLoading ? (
+                <div className="space-y-5">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-14 animate-pulse rounded-xl bg-white/10" />
+                  ))}
+                </div>
+              ) : contactDetails.length > 0 ? (
+                <div className="space-y-5">
+                  {contactDetails.map(({ icon: Icon, label, value, href }) => (
+                    <div key={label} className="flex items-start gap-3">
+                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-white/10 shadow-sm">
+                        <Icon className="size-4 text-white/90" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium uppercase tracking-wider text-white/70">
+                          {label}
+                        </p>
+                        {href ? (
+                          <a
+                            href={href}
+                            target={label === "Address" && mapLinkUrl ? "_blank" : undefined}
+                            rel={
+                              label === "Address" && mapLinkUrl
+                                ? "noopener noreferrer"
+                                : undefined
+                            }
+                            className="mt-0.5 inline-block text-sm text-white underline-offset-4 transition-colors hover:text-white/90 hover:underline"
+                          >
+                            {value}
+                          </a>
+                        ) : (
+                          <p className="mt-0.5 text-sm text-white">{value}</p>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-xs font-medium uppercase tracking-wider text-white/70">
-                        {label}
-                      </p>
-                      {href ? (
-                        <a
-                          href={href}
-                          className="mt-0.5 inline-block text-sm text-white underline-offset-4 transition-colors hover:text-white/90 hover:underline"
-                        >
-                          {value}
-                        </a>
-                      ) : (
-                        <p className="mt-0.5 text-sm text-white">{value}</p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-white/70">
+                  Contact details will appear here soon.
+                </p>
+              )}
 
-              {/* Map - fills remaining height on web */}
+              {/* Map */}
               <div className="mt-4 min-h-[240px] flex-1 overflow-hidden rounded-2xl border border-border shadow-sm lg:min-h-0">
-                <iframe
-                  title="Kohinoor Hall location"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3739.0001861138276!2d57.61624551111114!3d-20.424073553805545!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x217c61095225da75%3A0x67f9bbfefa97693f!2sKohinoor%20Hall!5e0!3m2!1sen!2smu!4v1772267906125!5m2!1sen!2smu"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0, minHeight: 240 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  className="h-full min-h-[240px] w-full"
-                />
+                {mapEmbedUrl ? (
+                  <iframe
+                    title="Kohinoor Decorations location"
+                    src={mapEmbedUrl}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0, minHeight: 240 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    className="h-full min-h-[240px] w-full"
+                  />
+                ) : mapLinkUrl ? (
+                  <a
+                    href={mapLinkUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-full min-h-[240px] w-full items-center justify-center bg-white/10 px-6 text-center text-sm font-medium text-white transition-colors hover:bg-white/15"
+                  >
+                    View location on Google Maps
+                  </a>
+                ) : (
+                  <div className="flex h-full min-h-[240px] w-full items-center justify-center bg-white/5 px-6 text-center text-sm text-white/60">
+                    Map location coming soon.
+                  </div>
+                )}
               </div>
             </div>
           </div>
