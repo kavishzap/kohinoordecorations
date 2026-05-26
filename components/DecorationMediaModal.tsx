@@ -16,23 +16,47 @@ type DecorationMediaModalProps = {
   error?: boolean
 }
 
+function VideoSlide({ src, play }: { src: string; play: boolean }) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    if (play) {
+      video.currentTime = 0
+      const promise = video.play()
+      if (promise) promise.catch(() => {})
+    } else {
+      video.pause()
+    }
+  }, [play, src])
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      controls
+      autoPlay
+      muted
+      playsInline
+      preload="auto"
+      className="block max-h-[85dvh] w-full max-w-[min(96vw,900px)] rounded-lg object-contain"
+    />
+  )
+}
+
 function SlideContent({
   src,
   type,
+  play,
 }: {
   src: string
   type: "image" | "video"
+  play: boolean
 }) {
   if (type === "video") {
-    return (
-      <video
-        src={src}
-        controls
-        playsInline
-        preload="metadata"
-        className="block max-h-[85dvh] w-full max-w-[min(96vw,900px)] rounded-lg object-contain"
-      />
-    )
+    return <VideoSlide src={src} play={play} />
   }
 
   return (
@@ -233,7 +257,11 @@ export default function DecorationMediaModal({
                         className="flex min-h-[min(50dvh,400px)] min-w-0 shrink-0 grow-0 basis-full items-center justify-center px-1"
                       >
                         {url ? (
-                          <SlideContent src={url} type={slide.type} />
+                          <SlideContent
+                            src={url}
+                            type={slide.type}
+                            play={index === selectedIndex}
+                          />
                         ) : isLoadingSlide ? (
                           <Loader2
                             className="size-10 animate-spin text-white/70"

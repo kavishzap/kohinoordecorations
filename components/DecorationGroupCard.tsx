@@ -20,7 +20,13 @@ export default function DecorationGroupCard({
 }: DecorationGroupCardProps) {
   return (
     <div className="flex flex-col">
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-muted shadow-sm">
+      <button
+        type="button"
+        onClick={() => onSeeBundle(group)}
+        disabled={loadingDetail}
+        aria-label="See full setup"
+        className="group relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-muted shadow-sm transition-opacity hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+      >
         {group.frontUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -32,7 +38,12 @@ export default function DecorationGroupCard({
         ) : (
           <Skeleton className="absolute inset-0 rounded-2xl" />
         )}
-      </div>
+        {loadingDetail && (
+          <span className="absolute inset-0 flex items-center justify-center bg-black/30">
+            <Loader2 className="size-8 animate-spin text-white" aria-hidden />
+          </span>
+        )}
+      </button>
 
       <div className="mt-3 flex items-baseline justify-between gap-3">
         <p className="text-xl font-bold text-primary">
