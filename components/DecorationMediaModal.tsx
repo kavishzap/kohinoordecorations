@@ -41,7 +41,7 @@ function VideoSlide({ src, play }: { src: string; play: boolean }) {
       muted
       playsInline
       preload="auto"
-      className="block max-h-[85dvh] w-full max-w-[min(96vw,900px)] rounded-lg object-contain"
+      className="max-h-[85dvh] max-w-full rounded-lg object-contain"
     />
   )
 }
@@ -65,7 +65,7 @@ function SlideContent({
       src={src}
       alt=""
       draggable={false}
-      className="block max-h-[92dvh] max-w-[min(96vw,1200px)] w-auto select-none rounded-lg object-contain shadow-2xl"
+      className="max-h-[85dvh] max-w-full select-none rounded-lg object-contain"
     />
   )
 }
@@ -96,7 +96,11 @@ export default function DecorationMediaModal({
   })
 
   const currentSlide = slides[selectedIndex]
-  const isVideoActive = currentSlide?.type === "video"
+  const activeUrl = currentSlide ? loadedUrls[currentSlide.slot] : undefined
+  const isLoadingActive =
+    Boolean(currentSlide) &&
+    loadingSlot === currentSlide?.slot &&
+    !activeUrl
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi])
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi])
@@ -223,9 +227,7 @@ export default function DecorationMediaModal({
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.98, opacity: 0 }}
           transition={{ duration: 0.25 }}
-          className={`relative flex min-h-[200px] w-full items-center justify-center px-2 sm:px-14 ${
-            isVideoActive ? "max-w-[min(96vw,920px)]" : "max-w-[min(96vw,1200px)]"
-          }`}
+          className="relative flex min-h-[200px] w-full max-w-[min(96vw,960px)] items-center justify-center px-2 sm:px-14"
           onClick={(e) => e.stopPropagation()}
         >
           {error || loadError || (!loadingMeta && slides.length === 0) ? (
@@ -239,43 +241,44 @@ export default function DecorationMediaModal({
             />
           ) : (
             <>
-              <div
-                ref={emblaRef}
-                className={`w-full overflow-hidden touch-pan-y ${
-                  isVideoActive ? "max-w-[min(96vw,900px)]" : ""
-                }`}
-              >
-                <div className="flex">
-                  {slides.map((slide, index) => {
-                    const url = loadedUrls[slide.slot]
-                    const isLoadingSlide =
-                      loadingSlot === slide.slot && !url
-
-                    return (
+              <div className="relative w-full">
+                <div
+                  ref={emblaRef}
+                  className="w-full overflow-hidden touch-pan-y select-none"
+                >
+                  <div className="flex">
+                    {slides.map((slide) => (
                       <div
                         key={slide.slot}
-                        className="flex min-h-[min(50dvh,400px)] min-w-0 shrink-0 grow-0 basis-full items-center justify-center px-1"
-                      >
-                        {url ? (
-                          <SlideContent
-                            src={url}
-                            type={slide.type}
-                            play={index === selectedIndex}
-                          />
-                        ) : isLoadingSlide ? (
-                          <Loader2
-                            className="size-10 animate-spin text-white/70"
-                            aria-hidden
-                          />
-                        ) : (
-                          <div
-                            className="h-[min(50dvh,400px)] w-full"
-                            aria-hidden
-                          />
-                        )}
-                      </div>
-                    )
-                  })}
+                        className="h-[min(85dvh,720px)] min-w-0 shrink-0 grow-0 basis-full"
+                        aria-hidden
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
+                  {activeUrl && currentSlide ? (
+                    <div
+                      className={
+                        currentSlide.type === "video"
+                          ? "pointer-events-auto"
+                          : undefined
+                      }
+                    >
+                      <SlideContent
+                        key={currentSlide.slot}
+                        src={activeUrl}
+                        type={currentSlide.type}
+                        play
+                      />
+                    </div>
+                  ) : isLoadingActive ? (
+                    <Loader2
+                      className="size-10 animate-spin text-white/70"
+                      aria-hidden
+                    />
+                  ) : null}
                 </div>
               </div>
 
